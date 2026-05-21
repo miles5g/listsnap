@@ -101,7 +101,7 @@ Production-oriented MVP — core analyze → edit → copy loop is complete; aut
 
 ## Author
 
-**Miles Johnson** — co-built with [Luke Everly](https://github.com/lheverly) (original Lovable prototype). This repository is the maintained portfolio copy under [@miles5g](https://github.com/miles5g).
+**Miles Johnson** — [@miles5g](https://github.com/miles5g)
 
 ## License
 
