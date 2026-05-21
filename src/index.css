@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 7%;
+    --foreground: 0 0% 93%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 0 0% 93%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 0 0% 93%;
+
+    --primary: 142 72% 50%;
+    --primary-foreground: 220 20% 7%;
+
+    --secondary: 220 16% 16%;
+    --secondary-foreground: 0 0% 80%;
+
+    --muted: 220 14% 14%;
+    --muted-foreground: 220 10% 50%;
+
+    --accent: 142 72% 50%;
+    --accent-foreground: 220 20% 7%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 93%;
+
+    --border: 220 14% 18%;
+    --input: 220 14% 18%;
+    --ring: 142 72% 50%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 0 0% 93%;
+    --sidebar-primary: 142 72% 50%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 16% 16%;
+    --sidebar-accent-foreground: 0 0% 93%;
+    --sidebar-border: 220 14% 18%;
+    --sidebar-ring: 142 72% 50%;
+
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: var(--font-sans);
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-mono);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .glow-green {
+    box-shadow: 0 0 20px hsl(142 72% 50% / 0.15), 0 0 60px hsl(142 72% 50% / 0.05);
+  }
+  .glow-green-sm {
+    box-shadow: 0 0 10px hsl(142 72% 50% / 0.1);
+  }
+  .border-glow {
+    border-color: hsl(142 72% 50% / 0.3);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  @keyframes scan-sweep {
+    0%, 100% { top: 0; }
+    50% { top: 100%; }
+  }
+  .animate-scan-sweep {
+    animation: scan-sweep 2.2s ease-in-out infinite;
+  }
+}
