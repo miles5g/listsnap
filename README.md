@@ -1,5 +1,9 @@
 # ListSnap
 
+**Try it on your phone:** https://miles5g.github.io/listsnap/
+
+The hosted version runs entirely in the browser. Paste your own Gemini API key (free at aistudio.google.com/apikey) once; it stays in that browser's local storage. Snap a photo and get an estimated resale price range plus a title, description, and tags to copy. Prices are AI estimates, not sold-price data.
+
 Take a photo of something you want to sell. ListSnap writes the listing: title, description, price range, and tags, ready to paste into eBay, Facebook Marketplace, or Depop.
 
 ## How it works

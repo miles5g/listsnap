@@ -3,6 +3,7 @@ import { Camera, RotateCcw, Zap, History } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { analyzeDirect, hasBackend, getGeminiKey, setGeminiKey } from "@/lib/directAnalyze";
 import { supabase } from "@/integrations/supabase/client";
 import PhotoUpload from "@/components/PhotoUpload";
 import ItemDetectionCard from "@/components/ItemDetectionCard";
@@ -142,6 +143,34 @@ function saveToHistory(listing: ListingData, itemDetails: ItemDetails) {
 
 export type ListingTemplate = "default" | "minimal" | "detailed";
 
+const KeyBox = () => {
+  const [key, setKey] = useState(getGeminiKey());
+  const [open, setOpen] = useState(!getGeminiKey());
+  if (!open)
+    return (
+      <button className="mb-4 text-xs text-muted-foreground underline" onClick={() => setOpen(true)}>
+        Gemini key saved on this device · change
+      </button>
+    );
+  return (
+    <div className="mb-5 rounded-lg border border-border p-3 text-sm">
+      <p className="mb-2 text-muted-foreground">
+        Paste a Gemini API key to run the photo analysis. Get a free one at{" "}
+        <a className="underline" href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">aistudio.google.com/apikey</a>.
+        It stays in this browser only.
+      </p>
+      <div className="flex gap-2">
+        <input
+          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5"
+          type="password" autoComplete="off" placeholder="AIza..." value={key}
+          onChange={(e) => setKey(e.target.value)}
+        />
+        <Button size="sm" onClick={() => { setGeminiKey(key); setOpen(!key); if (key) toast.success("Key saved"); }}>Save</Button>
+      </div>
+    </div>
+  );
+};
+
 const Index = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -185,15 +214,18 @@ const Index = () => {
     setAnalysisFailed(false);
     try {
       const ANALYZE_TIMEOUT_MS = 90_000; // 90s so AI has time to respond
-      const invokePromise = supabase.functions.invoke("analyze-item", {
-        body: { image: base64Image, template: listingTemplate },
-      });
       const timeoutPromise = new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error("Analysis timed out. Try again or use a smaller image.")), ANALYZE_TIMEOUT_MS)
       );
-
+      let data: any;
+      if (!hasBackend) {
+        data = await Promise.race([analyzeDirect(base64Image, listingTemplate), timeoutPromise]);
+      } else {
+      const invokePromise = supabase.functions.invoke("analyze-item", {
+        body: { image: base64Image, template: listingTemplate },
+      });
       const result = await Promise.race([invokePromise, timeoutPromise]);
-      const { data, error } = result as { data: unknown; error: { message?: string } | null };
+      const { data: d, error } = result as { data: unknown; error: { message?: string } | null };
 
       if (error) {
         let msg = error.message ?? "Request failed.";
@@ -208,6 +240,8 @@ const Index = () => {
         const e = new Error(msg) as Error & { code?: string };
         e.code = code;
         throw e;
+      }
+      data = d;
       }
       if (!data || !isValidListingData(data.listing) || !isValidItemDetails(data.itemDetails)) {
         throw new Error("Invalid response from analysis. Please retry.");
@@ -304,6 +338,7 @@ const Index = () => {
 
       {/* Main */}
       <main className="flex-1 max-w-lg mx-auto w-full px-4 py-5 safe-bottom">
+        {!hasBackend && <KeyBox />}
         <Stepper currentStep={currentStep} />
 
         {!imagePreview && (
